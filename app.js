@@ -33,13 +33,13 @@ const checkAndOrder = async (pairObj, con) => {
         const bars = await apiConnect.getCandles(`https://api.binance.com/api/v3/klines?symbol=${pairObj.symbol}&interval=5m&limit=1`);
 
         if (!bars) {
-            await apiConnect.sleep(10000)
+            await apiConnect.sleep(60000)
             apiFailureCount += 1
             if (debug) console.log("API FAILURES")
             if (apiFailureCount == 30) {
                 notiStatus = await apiConnect.pushBulletNoti('Alert!', 'MULTIPLE Binance API FAILURES Bot Closed!');
                 await apiConnect.telegramNoti({'Alert!': 'MULTIPLE Binance API FAILURES Bot Closed!' })
-                process.exit()
+                // process.exit()
             }
             continue;
         }
@@ -133,12 +133,18 @@ const checkAndOrder = async (pairObj, con) => {
 
 
                             tempPairDataObject.levels = levels
-                            dt = await con.execute('update pairs set pairs=? where name=? ', [JSON.stringify(tempPairDataObject), tempPairDataObject.name])
+
+                            try{
+                                dt = await con.execute('update pairs set pairs=? where name=? ', [JSON.stringify(tempPairDataObject), tempPairDataObject.name])
                             console.log(dt)
 
                             //add buy entry in orders
                             dt = await con.execute('INSERT INTO `orders`( `order_id`, `side`, `fee_amount`, `quantity`, `price`, `symbol`, `timestamp`) VALUES (?, ?, ?, ?, ?,?,?)', [buyOrderStatus.orders[0].id, buyOrderStatus.orders[0].side, buyOrderStatus.orders[0].fee_amount, buyOrderStatus.orders[0].total_quantity, buyOrderStatus.orders[0].price_per_unit, buyOrderStatus.orders[0].market, buyOrderStatus.orders[0].created_at])
 
+                            }
+                            catch(err) {
+                                console.error(err)
+                            }
 
                             if (debug) console.log(buyOrderStatus)
                         }
@@ -218,12 +224,17 @@ const checkAndOrder = async (pairObj, con) => {
 
                                 //update levels in pairs table
                                 tempPairDataObject.levels = levels
+                               try{
                                 dt = await con.execute('update pairs set pairs=? where name=? ', [JSON.stringify(tempPairDataObject), tempPairDataObject.name])
                                 console.log(dt)
 
                                 //add sell entry in orders
                                 dt = await con.execute('INSERT INTO `orders`( `order_id`, `side`, `fee_amount`, `quantity`, `price`, `symbol`, `timestamp`) VALUES (?, ?, ?, ?, ?,?,?)', [sellOrderStatus.orders[0].id, sellOrderStatus.orders[0].side, sellOrderStatus.orders[0].fee_amount, sellOrderStatus.orders[0].total_quantity, sellOrderStatus.orders[0].price_per_unit, sellOrderStatus.orders[0].market, sellOrderStatus.orders[0].created_at])
 
+                               }
+                               catch(err) {
+                                   console.error(err)
+                               }
                                 if (debug) console.log(sellOrderStatus)
                             }
 
