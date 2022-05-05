@@ -1,0 +1,21 @@
+{
+  "name": "bot",
+  "version": "1.0.0",
+  "description": "automated trading bot for coindcx ",
+  "main": "app.js",
+  "scripts": {
+    "test": "node app"
+  },
+  "author": "adarsh.chouhan11@gmail.com",
+  "license": "MIT",
+  "dependencies": {
+    "crypto": "^1.0.1",
+    "dotenv": "^16.0.0",
+    "forever": "^4.0.3",
+    "mysql2": "^2.3.3",
+    "node-fetch": "^2.6.7",
+    "pm2": "^5.2.0",
+    "request": "^2.88.2",
+    "require": "^2.4.20"
+  }
+}
