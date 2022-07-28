@@ -1,10 +1,11 @@
 require('dotenv').config();
 const apiConnect = require('./lib/apiConnect');
 const mysql = require('mysql2/promise');
+const debug = true
 
 
-const timeInterval = '30m'
-const timeIntervalInMilliSeconds = 30 * 60 * 1000
+const timeInterval = '15m'
+const timeIntervalInMilliSeconds = 15 * 60 * 1000
 
 const symbols = [
     {
@@ -26,6 +27,11 @@ const symbols = [
         symbol: 'MATICUSDT',
         lastPrice: 0,
         percentageDiff: 6.5
+    },
+    {
+        symbol: 'LUNAUSDT',
+        lastPrice: 0,
+        percentageDiff: 80
     }
 
 ];
@@ -45,6 +51,7 @@ const alert = async (pairObj) => {
     while (true) {
         const bars = await apiConnect.getCandles(`https://api.binance.com/api/v3/klines?symbol=${pairObj.symbol}&interval=${timeInterval}&limit=1`);
 
+        console.log(bars)
         if (!bars) {
             await apiConnect.sleep(10000)
             apiFailureCount += 1

@@ -3,6 +3,13 @@ const apiConnect = require('./lib/apiConnect');
 const debug = true
 const mysql = require('mysql2/promise');
 
+process.on('uncaughtException', err => {
+    console.log('UNCAUGHT EXCEPTION!!! shutting down...');
+    console.log(err.name, err.message);
+    process.exit(1);
+});
+
+
 
 const checkAndOrder = async (pairObj, con) => {
     const tempPairDataObject = pairObj
@@ -277,6 +284,12 @@ const master = async () => {
     }
 
 }
+
+process.on('unhandledRejection', err => {
+    console.log('UNHANDLED REJECTION!!!  shutting down ...');
+    console.log(err.name, err.message);
+});
+
 
 master()
 
